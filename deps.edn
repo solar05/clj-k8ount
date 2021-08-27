@@ -1,0 +1,16 @@
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.10.3"}}
+ :aliases {:test {:extra-paths ["test"]
+                  :extra-deps  {lambdaisland/kaocha {:mvn/version "1.0.861"}}
+                  :main-opts   ["-m" "kaocha.runner"]}
+           :eastwood {:main-opts ["-m"
+                                  "eastwood.lint"
+                                  {:exclude-linters
+                                   [:reflection :no-ns-form-found]}]
+	          :extra-deps {jonase/eastwood {:mvn/version "RELEASE"}}}
+           :kibit {:extra-deps {tvaughan/kibit-runner {:mvn/version "1.0.1"}}
+                   :main-opts ["-m" "kibit-runner.cmdline"]}
+           :cljfmt-check {:extra-deps {cljfmt/cljfmt {:mvn/version "0.8.0"}}
+                    :main-opts ["-m" "cljfmt.main" "check"]}
+           :cljfmt-fix {:extra-deps {cljfmt/cljfmt {:mvn/version "0.8.0"}}
+                          :main-opts ["-m" "cljfmt.main" "fix"]}}}
