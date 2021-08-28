@@ -1,15 +1,38 @@
 (ns core
   (:require [ring.adapter.jetty :as ring]
-            [compojure.core :refer [GET defroutes]]
+            [compojure.core :refer [GET POST defroutes]]
             [ring.middleware.json :refer [wrap-json-response]]
             [ring.util.response :refer [response header]])
   (:gen-class))
 
+(def counter (atom 0))
+
+(defn- wrap-counter []
+  (header (response {:counter @counter}) "Content-Type" "application/json"))
+
 (defn health [_]
   (header (response []) "Content-Type" "application/json"))
 
+(defn increment [_]
+  (do
+    (swap! counter inc)
+    (wrap-counter)))
+
+(defn decrement [_]
+  (do
+    (swap! counter dec)
+    (wrap-counter)))
+
+(defn reset [_]
+  (do
+    (reset! counter 0)
+    (wrap-counter)))
+
 (defroutes routes
-  (GET "/health" [] health))
+  (GET "/health" [] health)
+  (POST "/inc" [] increment)
+  (POST "/dec" [] decrement)
+  (POST "/reset" [] reset))
 
 (def app (wrap-json-response routes))
 
