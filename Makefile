@@ -1,3 +1,5 @@
+run:
+	clojure -m core
 checks: lint check-kibit check-eastwood kondo
 lint:
 	clojure -M:cljfmt-check
