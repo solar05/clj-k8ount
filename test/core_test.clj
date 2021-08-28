@@ -36,3 +36,10 @@
          body (js/read-json (:body response))]
      (is (= 200 (:status response)))
      (is (zero? (:counter body))))))
+
+(deftest current
+  (testing
+   (let [response (app {:uri "/current" :request-method :get})
+         body (js/read-json (:body response))]
+     (is (= 200 (:status response)))
+     (is (zero? (:counter body))))))

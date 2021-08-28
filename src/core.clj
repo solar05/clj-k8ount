@@ -11,7 +11,8 @@
   (header (response {:counter @counter}) "Content-Type" "application/json"))
 
 (defn health [_]
-  (header (response []) "Content-Type" "application/json"))
+  (header
+   (response []) "Content-Type" "application/json"))
 
 (defn increment [_]
   (swap! counter inc)
@@ -25,11 +26,15 @@
   (reset! counter 0)
   (wrap-counter))
 
+(defn current [_]
+  (wrap-counter))
+
 (defroutes routes
   (GET "/health" [] health)
   (POST "/inc" [] increment)
   (POST "/dec" [] decrement)
-  (POST "/reset" [] reset))
+  (POST "/reset" [] reset)
+  (GET "/current" [] current))
 
 (def app (wrap-json-response routes))
 
