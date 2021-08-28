@@ -1,8 +1,8 @@
 (ns core-test
-    (:require [clojure.test :refer :all]
-              [core :refer [app]]
-              [clojure.string :as s]
-              [clojure.data.json :as js]))
+  (:require [clojure.test :refer :all]
+            [core :refer [app]]
+            [clojure.string :as s]
+            [clojure.data.json :as js]))
 
 (deftest some-core-test
   (testing "Fixed, no fail."
