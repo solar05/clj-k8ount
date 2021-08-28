@@ -35,4 +35,4 @@
    (let [response (app {:uri "/reset" :request-method :post})
          body (js/read-json (:body response))]
      (is (= 200 (:status response)))
-     (is (= 0 (:counter body))))))
+     (is (zero? (:counter body))))))

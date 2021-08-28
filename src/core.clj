@@ -14,19 +14,16 @@
   (header (response []) "Content-Type" "application/json"))
 
 (defn increment [_]
-  (do
-    (swap! counter inc)
-    (wrap-counter)))
+  (swap! counter inc)
+  (wrap-counter))
 
 (defn decrement [_]
-  (do
-    (swap! counter dec)
-    (wrap-counter)))
+  (swap! counter dec)
+  (wrap-counter))
 
 (defn reset [_]
-  (do
-    (reset! counter 0)
-    (wrap-counter)))
+  (reset! counter 0)
+  (wrap-counter))
 
 (defroutes routes
   (GET "/health" [] health)
