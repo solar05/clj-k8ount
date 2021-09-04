@@ -12,7 +12,7 @@
 
 (defn health [_]
   (header
-   (response []) "Content-Type" "application/json"))
+   (response ["I'm alive!"]) "Content-Type" "application/json"))
 
 (defn increment [_]
   (swap! counter inc)
