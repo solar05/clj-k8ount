@@ -2,7 +2,8 @@
   (:require [ring.adapter.jetty :as ring]
             [compojure.core :refer [GET POST defroutes]]
             [ring.middleware.json :refer [wrap-json-response]]
-            [ring.util.response :refer [response header]])
+            [ring.util.response :refer [response header]]
+            [ring.middleware.cors :refer [wrap-cors]])
   (:gen-class))
 
 (def counter (atom 0))
@@ -36,7 +37,11 @@
   (POST "/reset" [] reset)
   (GET "/current" [] current))
 
-(def app (wrap-json-response routes))
+(def handler (wrap-cors routes
+                        :access-control-allow-origin [#".*"]
+                        :access-control-allow-methods [:get :post]))
+
+(def app (wrap-json-response handler))
 
 (defn start [port]
   (ring/run-jetty app {:port port :join? false}))
