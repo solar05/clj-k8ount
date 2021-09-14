@@ -53,10 +53,11 @@
         "[" history-time "] "
         "req_id=" (swap! request-ids inc) " "
         "exec_time=" req-time "ms "
-        "uri=" uri " "
-        "method=" (name request-method) " "
+        "http_path=" uri " "
+        "http_method=" (name request-method) " "
         "addr=" remote-addr " "
-        (when-not (nil? query-string) (str "query_str='" query-string "'"))))
+        (when-not (nil? query-string) (str "query_str='" query-string "'"))
+	"http_status="(:status result)))
       result)))
 
 (def handler (wrap-canonical-logs
