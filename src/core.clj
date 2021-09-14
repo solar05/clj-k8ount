@@ -57,7 +57,7 @@
         "http_method=" (name request-method) " "
         "addr=" remote-addr " "
         (when-not (nil? query-string) (str "query_str='" query-string "'"))
-	"http_status="(:status result)))
+        "http_status=" (:status result)))
       result)))
 
 (def handler (wrap-canonical-logs
