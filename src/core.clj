@@ -3,10 +3,13 @@
             [compojure.core :refer [GET POST defroutes]]
             [ring.middleware.json :refer [wrap-json-response]]
             [ring.util.response :refer [response header]]
-            [ring.middleware.cors :refer [wrap-cors]])
+            [ring.middleware.cors :refer [wrap-cors]]
+            [clj-time.core :as t])
   (:gen-class))
 
 (def counter (atom 0))
+
+(def request-ids (atom 0))
 
 (defn- wrap-counter []
   (header (response {:counter @counter}) "Content-Type" "application/json"))
@@ -37,9 +40,29 @@
   (POST "/reset" [] reset)
   (GET "/current" [] current))
 
-(def handler (wrap-cors routes
-                        :access-control-allow-origin [#".*"]
-                        :access-control-allow-methods [:get :post]))
+(defn wrap-canonical-logs [func]
+  (fn [& args]
+    (let [init-time (t/now)
+          params (first args)
+          history-time (str init-time)
+          result (apply func args)
+          {:keys [uri request-method remote-addr query-string]} params
+          req-time (t/in-millis (t/interval init-time (t/now)))]
+      (println
+       (str
+        "[" history-time "] "
+        "req_id=" (swap! request-ids inc) " "
+        "exec_time=" req-time "ms "
+        "uri=" uri " "
+        "method=" (name request-method) " "
+        "addr=" remote-addr " "
+        (when-not (nil? query-string) (str "query_str='" query-string "'"))))
+      result)))
+
+(def handler (wrap-canonical-logs
+              (wrap-cors routes
+                         :access-control-allow-origin [#".*"]
+                         :access-control-allow-methods [:get :post])))
 
 (def app (wrap-json-response handler))
 
