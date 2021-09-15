@@ -1,46 +1,16 @@
 (ns core
   (:require [ring.adapter.jetty :as ring]
-            [compojure.core :refer [GET POST defroutes]]
             [ring.middleware.json :refer [wrap-json-response]]
-            [ring.util.response :refer [response header]]
             [ring.middleware.cors :refer [wrap-cors]]
-            [clj-time.core :as t])
+            [clj-time.core :as t]
+            [routes :refer [routes]])
   (:gen-class))
 
-(def counter (atom 0))
+(def app-env (or (System/getenv "KOUNT_ENV") "dev"))
 
 (def request-ids (atom 0))
 
-(defn- wrap-counter []
-  (header (response {:counter @counter}) "Content-Type" "application/json"))
-
-(defn health [_]
-  (header
-   (response ["I'm alive!"]) "Content-Type" "application/json"))
-
-(defn increment [_]
-  (swap! counter inc)
-  (wrap-counter))
-
-(defn decrement [_]
-  (swap! counter dec)
-  (wrap-counter))
-
-(defn reset [_]
-  (reset! counter 0)
-  (wrap-counter))
-
-(defn current [_]
-  (wrap-counter))
-
-(defroutes routes
-  (GET "/health" [] health)
-  (POST "/inc" [] increment)
-  (POST "/dec" [] decrement)
-  (POST "/reset" [] reset)
-  (GET "/current" [] current))
-
-(defn wrap-canonical-logs [func]
+(defn- wrap-canonical-logs [func]
   (fn [& args]
     (let [init-time (t/now)
           params (first args)
@@ -60,12 +30,11 @@
         "http_status=" (:status result)))
       result)))
 
-(def handler (wrap-canonical-logs
-              (wrap-cors routes
-                         :access-control-allow-origin [#".*"]
-                         :access-control-allow-methods [:get :post])))
-
-(def app (wrap-json-response handler))
+(def app
+  (-> routes
+      (wrap-cors :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post])
+      ((when-not (= app-env "test") wrap-canonical-logs))
+      (wrap-json-response)))
 
 (defn start [port]
   (ring/run-jetty app {:port port :join? false}))
