@@ -6,8 +6,6 @@
             [routes :refer [routes]])
   (:gen-class))
 
-(def app-env (or (System/getenv "KOUNT_ENV") "dev"))
-
 (def request-ids (atom 0))
 
 (defn- wrap-canonical-logs [func]
@@ -33,7 +31,7 @@
 (def app
   (-> routes
       (wrap-cors :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post])
-      ((when-not (= app-env "test") wrap-canonical-logs))
+      (wrap-canonical-logs)
       (wrap-json-response)))
 
 (defn start [port]
