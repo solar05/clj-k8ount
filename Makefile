@@ -11,4 +11,8 @@ kondo:
 	clj-kondo --lint src --config .clj-kondo/config.edn
 test:
 	clojure -M:test
+dbuild:
+	docker-compose build
+drun:
+	docker-compose up
 .PHONY: test
