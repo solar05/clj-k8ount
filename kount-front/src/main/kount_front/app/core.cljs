@@ -7,27 +7,43 @@
 
 (defonce counter (r/atom 0))
 
-(defn check-counter []
-  (go (let [response (<! (http/get "http://localhost:4000/current"
+(defonce api-url "http://localhost:4000")
+
+(defonce health (r/atom false))
+
+(defn check-health []
+  (go (let [response (<! (http/get (str api-url "/health")
                                    {:with-credentials? false}))]
+        (reset! health (:success response)))))
+
+(defn healthy? []
+  @health)
+
+(defn check-counter []
+  (go (let [response (<! (http/get (str api-url "/current")
+                                   {:with-credentials? false}))]
+        (reset! health (:success response))
         (when (= (:status response) 200)
           (reset! counter (:counter (:body response)))))))
 
 (defn increment []
-  (go (let [response (<! (http/post "http://localhost:4000/inc"
-                                   {:with-credentials? false}))]
+  (go (let [response (<! (http/post (str api-url "/inc")
+                                    {:with-credentials? false}))]
+        (reset! health (:success response))
         (when (= (:status response) 200)
           (reset! counter (:counter (:body response)))))))
 
 (defn decrement []
-  (go (let [response (<! (http/post "http://localhost:4000/dec"
-                                   {:with-credentials? false}))]
+  (go (let [response (<! (http/post (str api-url "/dec")
+                                    {:with-credentials? false}))]
+        (reset! health (:success response))
         (when (= (:status response) 200)
           (reset! counter (:counter (:body response)))))))
 
 (defn reset []
-  (go (let [response (<! (http/post "http://localhost:4000/reset"
-                                   {:with-credentials? false}))]
+  (go (let [response (<! (http/post (str api-url "/reset")
+                                    {:with-credentials? false}))]
+        (reset! health (:success response))
         (when (= (:status response) 200)
           (reset! counter (:counter (:body response)))))))
 
@@ -35,20 +51,26 @@
   [:div.d-flex.justify-content-center
    [:div.card.text-center.w-50.border-dark
     [:div.card-header.border-dark "clj-k8ount"]
-    [:div.card-body
-     [:h5.card-title (str "Value of counter is " @counter)]
-     [:div.btn-group
-      [:button.btn.btn-success {:on-click increment} "Increment"]
-      [:button.btn.btn-danger {:on-click decrement} "Decrement"]
-      [:button.btn.btn-warning {:on-click reset} "Reset!!!"]]]]])
+    (if (healthy?)
+      [:div.card-body
+       [:h5.card-title (str "Value of counter is " @counter)]
+       [:div.btn-group
+        [:button.btn.btn-success {:on-click increment} "Increment"]
+        [:button.btn.btn-danger {:on-click decrement} "Decrement"]
+        [:button.btn.btn-warning {:on-click reset} "Reset!!!"]]]
+      [:div.caard-body
+       [:h5.card-title.p-2 "Service temporary inavailable ¯\\_(ツ)_/¯"]
+       [:button.btn.btn-primary.w-100 {:on-click check-health} "Ping service"]])]])
 
 (defn render []
   (rdom/render [app] (.getElementById js/document "root")))
 
 (defn ^:export main []
-  (check-counter)
+  (check-health)
+  (when (healthy?) (check-counter))
   (render))
 
 (defn ^:dev/after-load reload! []
-  (check-counter)
+  (check-health)
+  (when (healthy?) (check-counter))
   (render))
