@@ -11,8 +11,11 @@
 
 (defonce health (r/atom false))
 
+(defn build-url [additional-path]
+  (str api-url additional-path))
+
 (defn check-health []
-  (go (let [response (<! (http/get (str api-url "/health")
+  (go (let [response (<! (http/get (build-url "/health")
                                    {:with-credentials? false}))]
         (reset! health (:success response)))))
 
@@ -20,28 +23,28 @@
   @health)
 
 (defn check-counter []
-  (go (let [response (<! (http/get (str api-url "/current")
+  (go (let [response (<! (http/get (build-url "/current")
                                    {:with-credentials? false}))]
         (reset! health (:success response))
         (when (= (:status response) 200)
           (reset! counter (:counter (:body response)))))))
 
 (defn increment []
-  (go (let [response (<! (http/post (str api-url "/inc")
+  (go (let [response (<! (http/post (build-url "/inc")
                                     {:with-credentials? false}))]
         (reset! health (:success response))
         (when (= (:status response) 200)
           (reset! counter (:counter (:body response)))))))
 
 (defn decrement []
-  (go (let [response (<! (http/post (str api-url "/dec")
+  (go (let [response (<! (http/post (build-url "/dec")
                                     {:with-credentials? false}))]
         (reset! health (:success response))
         (when (= (:status response) 200)
           (reset! counter (:counter (:body response)))))))
 
 (defn reset []
-  (go (let [response (<! (http/post (str api-url "/reset")
+  (go (let [response (<! (http/post (build-url "/reset")
                                     {:with-credentials? false}))]
         (reset! health (:success response))
         (when (= (:status response) 200)
