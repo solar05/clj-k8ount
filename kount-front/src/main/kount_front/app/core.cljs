@@ -62,7 +62,7 @@
         [:button.btn.btn-danger {:on-click decrement} "Decrement"]
         [:button.btn.btn-warning {:on-click reset} "Reset!!!"]]]
       [:div.caard-body
-       [:h5.card-title.p-2 "Service temporary inavailable ¯\\_(ツ)_/¯"]
+       [:h5.card-title.p-2 "Service temporary unavailable ¯\\_(ツ)_/¯"]
        [:button.btn.btn-primary.w-100 {:on-click check-health} "Ping service"]])]])
 
 (defn render []
