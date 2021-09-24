@@ -19,7 +19,9 @@ jobs:
     - uses: DeLaGuardo/setup-clojure@3.5
       with:
         tools-deps: '1.10.3.981'
-    - name: Run checks
+    - name: Run checks for api
       run: make checks
-    - name: Run tests
+    - name: Run tests for api
       run: make test
+    - name: Run tests for summer
+      run: cd kount-sum && make test
