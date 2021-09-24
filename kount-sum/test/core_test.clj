@@ -20,8 +20,7 @@
 
 (deftest count-sum
   (testing
-   (let [response (app (-> (mock/request :post "/count")
-                           (mock/json-body {:number "20"})))
+   (let [response (app (mock/json-body (mock/request :post "/count") {:number "20"}))
          body (read-body response)]
      (is (= 200 (:status response)))
      (is (= 210 (:number body))))))
