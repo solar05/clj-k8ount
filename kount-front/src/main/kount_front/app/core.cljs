@@ -9,44 +9,59 @@
 
 (defonce api-url "http://localhost:4000")
 
-(defonce health (r/atom false))
+(defonce summer-url "http://localhost:5000")
 
-(defn build-url [additional-path]
+(defonce api-health (r/atom false))
+
+(defonce summer-health (r/atom false))
+
+(defn build-api-url [additional-path]
   (str api-url additional-path))
 
-(defn check-health []
-  (go (let [response (<! (http/get (build-url "/health")
-                                   {:with-credentials? false}))]
-        (reset! health (:success response)))))
+(defn build-summer-url [additional-path]
+  (str summer-url additional-path))
 
-(defn healthy? []
-  @health)
+(defn check-api-health []
+  (go (let [response (<! (http/get (build-api-url "/health")
+                                   {:with-credentials? false}))]
+        (reset! api-health (:success response)))))
+
+(defn check-summer-health []
+  (go (let [response (<! (http/get (build-summer-url "/health")
+                                   {:with-credentials? false}))]
+        (reset! summer-health (:success response)))))
+
+(defn api-healthy? []
+  @api-health)
+
+(defn summer-healthy? []
+  @summer-health)
 
 (defn check-counter []
-  (go (let [response (<! (http/get (build-url "/current")
+  (go (let [response (<! (http/get (build-api-url "/current")
                                    {:with-credentials? false}))]
-        (reset! health (:success response))
+        (reset! api-health (:success response))
         (when (= (:status response) 200)
           (reset! counter (:counter (:body response)))))))
 
 (defn increment []
-  (go (let [response (<! (http/post (build-url "/inc")
+  (go (let [response (<! (http/post (build-api-url "/inc")
                                     {:with-credentials? false}))]
-        (reset! health (:success response))
+        (reset! api-health (:success response))
         (when (= (:status response) 200)
           (reset! counter (:counter (:body response)))))))
 
 (defn decrement []
-  (go (let [response (<! (http/post (build-url "/dec")
+  (go (let [response (<! (http/post (build-api-url "/dec")
                                     {:with-credentials? false}))]
-        (reset! health (:success response))
+        (reset! api-health (:success response))
         (when (= (:status response) 200)
           (reset! counter (:counter (:body response)))))))
 
 (defn reset []
-  (go (let [response (<! (http/post (build-url "/reset")
+  (go (let [response (<! (http/post (build-api-url "/reset")
                                     {:with-credentials? false}))]
-        (reset! health (:success response))
+        (reset! api-health (:success response))
         (when (= (:status response) 200)
           (reset! counter (:counter (:body response)))))))
 
@@ -54,26 +69,33 @@
   [:div.d-flex.justify-content-center
    [:div.card.text-center.w-50.border-dark
     [:div.card-header.border-dark "clj-k8ount"]
-    (if (healthy?)
+    (if (api-healthy?)
       [:div.card-body
        [:h5.card-title (str "Value of counter is " @counter)]
        [:div.btn-group
         [:button.btn.btn-success {:on-click increment} "Increment"]
         [:button.btn.btn-danger {:on-click decrement} "Decrement"]
         [:button.btn.btn-warning {:on-click reset} "Reset!!!"]]]
-      [:div.caard-body
-       [:h5.card-title.p-2 "Service temporary unavailable ¯\\_(ツ)_/¯"]
-       [:button.btn.btn-primary.w-100 {:on-click check-health} "Ping service"]])]])
+      [:div.card-body
+       [:h5.card-title.p-2 "API service temporary unavailable ¯\\_(ツ)_/¯"]
+       [:button.btn.btn-primary.w-100 {:on-click check-api-health} "Ping service"]])
+    (if (summer-healthy?)
+      [:div "Summer is up!"]
+      [:div
+       [:h5.p-2 "Summer service temporary unavailable ¯\\_(ツ)_/¯"]
+       [:button.btn.btn-primary.w-100 {:on-click check-summer-health} "Ping service"]])]])
 
 (defn render []
   (rdom/render [app] (.getElementById js/document "root")))
 
 (defn ^:export main []
-  (check-health)
-  (when (healthy?) (check-counter))
+  (check-api-health)
+  (check-summer-health)
+  (when (api-healthy?) (check-counter))
   (render))
 
 (defn ^:dev/after-load reload! []
-  (check-health)
-  (when (healthy?) (check-counter))
+  (check-api-health)
+  (check-summer-health)
+  (when (api-healthy?) (check-counter))
   (render))
