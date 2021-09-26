@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clj-k8ount
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clj-k8ount-api
+  template:
+    metadata:
+      labels:
+        app: clj-k8ount-api
+    spec:
+      containers:
+        - name: api
+          image: solar7455/kub-k8ount-api
