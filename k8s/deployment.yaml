@@ -1,3 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+spec:
+  selector:
+    app: clj-k8ount
+  ports:
+    - protocol: 'TCP'
+      port: 4000
+      targetPort: 4000
+      name: api
+    - protocol: 'TCP'
+      port: 80
+      targetPort: 80
+      name: front
+    - protocol: 'TCP'
+      port: 5000
+      targetPort: 5000
+      name: sum
+  type: LoadBalancer
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,12 +28,16 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: clj-k8ount-api
+      app: clj-k8ount
   template:
     metadata:
       labels:
-        app: clj-k8ount-api
+        app: clj-k8ount
     spec:
       containers:
         - name: api
           image: solar7455/kub-k8ount-api
+        - name: front
+          image: solar7455/kub-k8ount-front
+        - name: sum
+          image: solar7455/kub-k8ount-sum
