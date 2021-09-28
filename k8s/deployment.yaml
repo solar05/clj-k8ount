@@ -37,7 +37,22 @@ spec:
       containers:
         - name: api
           image: solar7455/kub-k8ount-api
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4000
+            periodSeconds: 15
         - name: front
           image: solar7455/kub-k8ount-front
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4000
+            periodSeconds: 15
         - name: sum
           image: solar7455/kub-k8ount-sum
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 4000
+            periodSeconds: 15
