@@ -38,6 +38,6 @@
   (ring/run-jetty app {:port port :join? false}))
 
 (defn -main [& _args]
-  (let [port (Integer/parseInt (or (System/getenv "PORT") "4000"))]
+  (let [port (Integer/parseInt (or (System/getenv "PORT") "3000"))]
     (start port)
     (println (str "Server started at " port " port!"))))

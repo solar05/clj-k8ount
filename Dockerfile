@@ -7,6 +7,6 @@ RUN clojure -e "(prn :install)"
 
 COPY src ./src
 
-EXPOSE 4000
+EXPOSE 3000
 
 CMD ["clojure", "-m", "core"]

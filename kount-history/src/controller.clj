@@ -2,7 +2,6 @@
   (:require [ring.util.response :refer [response header]]
             [clj-time.core :as t]))
 
-
 (defonce history "history.txt")
 
 (defn health [_]

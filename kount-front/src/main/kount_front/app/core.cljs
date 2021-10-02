@@ -7,7 +7,7 @@
 
 (defonce counter (r/atom 0))
 
-(defonce api-url "http://localhost:4000")
+(defonce api-url "http://localhost:3000")
 
 (defonce summer-url "http://localhost:5000")
 
