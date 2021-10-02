@@ -23,7 +23,11 @@ jobs:
       run: make checks
     - name: Run tests for api
       run: make test
+    - name: Run checks for summer
+      run: cd kount-sum && make checks
     - name: Run tests for summer
       run: cd kount-sum && make test
+    - name: Run checks for history
+      run: cd kount-history && make checks
     - name: Run tests for history
       run: cd kount-history && make test
