@@ -46,13 +46,15 @@ spec:
               path: /health
               port: 3000
             periodSeconds: 15
+            initialDelaySeconds: 5
         - name: front
           image: solar7455/kub-k8ount-front
           livenessProbe:
             httpGet:
-              path: /health
+              path: /
               port: 80
             periodSeconds: 15
+            initialDelaySeconds: 5
         - name: sum
           image: solar7455/kub-k8ount-sum
           livenessProbe:
@@ -60,6 +62,7 @@ spec:
               path: /health
               port: 5000
             periodSeconds: 15
+            initialDelaySeconds: 5
         - name: history
           image: solar7455/kub-k8ount-history
           livenessProbe:
@@ -67,3 +70,10 @@ spec:
               path: /health
               port: 6000
             periodSeconds: 15
+            initialDelaySeconds: 5
+          volumeMounts:
+            - mountPath: /src
+              name: history-vol
+      volumes:
+        - name: history-vol
+          emptyDir: {}
