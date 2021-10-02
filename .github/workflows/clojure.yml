@@ -25,3 +25,5 @@ jobs:
       run: make test
     - name: Run tests for summer
       run: cd kount-sum && make test
+    - name: Run tests for history
+      run: cd kount-history && make test
