@@ -13,11 +13,11 @@
 
 (defonce counter (r/atom 0))
 
-(defonce api-url (str "http://" API_SERVICE_HOST ":" API_SERVICE_PORT))
+(defonce api-url "http://api")
 
-(defonce summer-url (str "http://" SUMMER_SERVICE_HOST ":" SUMMER_SERVICE_PORT))
+(defonce summer-url "http://summer")
 
-(defonce history-url (str "http://" HISTORY_SERVICE_HOST ":" HISTORY_SERVICE_PORT))
+(defonce history-url "http://history")
 
 (defonce api-health (r/atom false))
 

@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-front
+spec:
+  selector:
+    app: clj-k8ount-front
+  ports:
+    - protocol: 'TCP'
+      port: 80
+      targetPort: 80
+      name: front
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clj-k8ount-front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clj-k8ount-front
+  template:
+    metadata:
+      labels:
+        app: clj-k8ount-front
+    spec:
+      containers:
+        - name: front
+          image: solar7455/kub-k8ount-front:latest
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            periodSeconds: 15
+            initialDelaySeconds: 10
