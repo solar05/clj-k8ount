@@ -1,3 +1,11 @@
+# Environment
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: k8ount-env-map
+data:
+  history: 'Saved!!!'
+---
 # Persistent Storage
 apiVersion: v1
 kind: PersistentVolume
@@ -99,7 +107,10 @@ spec:
           image: solar7455/kub-k8ount-history:latest
           env:
             - name: HISTORY_TIMESTAMP
-              value: 'Saved!'
+              valueFrom:
+                configMapKeyRef:
+                  name: k8ount-env-map
+                  key: history
           livenessProbe:
             httpGet:
               path: /health
