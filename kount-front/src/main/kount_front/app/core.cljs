@@ -1,25 +1,38 @@
 (ns kount-front.app.core
-  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require-macros [cljs.core.async.macros :refer [go]]
+                   [adzerk.env :as e])
   (:require [reagent.dom :as rdom]
             [reagent.core :as r]
             [cljs-http.client :as http]
             [cljs.core.async :refer [<!]]))
 
+(e/def
+  API_URL "localhost"
+  SUMMER_URL "localhost"
+  HISTORY_URL "localhost")
+
 (defonce counter (r/atom 0))
 
-(defonce api-url "http://localhost:3000")
+(defonce api-url (str "http://" API_URL ":3000"))
 
-(defonce summer-url "http://localhost:5000")
+(defonce summer-url (str "http://" SUMMER_URL ":5000"))
+
+(defonce history-url (str "http://" HISTORY_URL ":6000"))
 
 (defonce api-health (r/atom false))
 
 (defonce summer-health (r/atom false))
+
+(defonce history-url (r/atom false))
 
 (defn build-api-url [additional-path]
   (str api-url additional-path))
 
 (defn build-summer-url [additional-path]
   (str summer-url additional-path))
+
+(defn build-history-url [additional-path]
+  (str history-url additional-path))
 
 (defn check-api-health []
   (go (let [response (<! (http/get (build-api-url "/health")

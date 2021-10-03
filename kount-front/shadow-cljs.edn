@@ -5,7 +5,8 @@
  :dependencies
  [[reagent            "1.0.0"]
   [binaryage/devtools "1.0.2"]
-  [cljs-http/cljs-http "0.1.46"]]
+  [cljs-http/cljs-http "0.1.46"]
+  [adzerk/env "0.4.0"]]
 
  :dev-http
  {3000 "public"}
