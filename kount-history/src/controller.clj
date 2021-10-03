@@ -4,6 +4,8 @@
 
 (defonce history "history.txt")
 
+(defonce timestamp-addition (or (System/getenv "HISTORY_TIMESTAMP") ""))
+
 (defn health [_]
   (header
    (response ["I'm alive!"]) "Content-Type" "application/json"))
@@ -14,7 +16,9 @@
         timestamp (str "[" (t/now) "]")]
     (spit history (str timestamp ": " text "\n") :append true)
     (header
-     (response {:timestamp timestamp})
+     (response {:timestamp (if (empty? timestamp-addition)
+                             timestamp
+                             (str timestamp " " timestamp-addition))})
      "Content-Type" "application/json")))
 
 (defn show-history [_]
