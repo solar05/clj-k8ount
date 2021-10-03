@@ -7,17 +7,17 @@
             [cljs.core.async :refer [<!]]))
 
 (e/def
-  API_URL "localhost"
-  SUMMER_URL "localhost"
-  HISTORY_URL "localhost")
+  API_SERVICE_HOST "localhost"
+  SUMMER_SERVICE_HOST "localhost"
+  HISTORY_SERVICE_HOST "localhost")
 
 (defonce counter (r/atom 0))
 
-(defonce api-url (str "http://" API_URL ":3000"))
+(defonce api-url (str "http://" API_SERVICE_HOST ":" API_SERVICE_PORT))
 
-(defonce summer-url (str "http://" SUMMER_URL ":5000"))
+(defonce summer-url (str "http://" SUMMER_SERVICE_HOST ":" SUMMER_SERVICE_PORT))
 
-(defonce history-url (str "http://" HISTORY_URL ":6000"))
+(defonce history-url (str "http://" HISTORY_SERVICE_HOST ":" HISTORY_SERVICE_PORT))
 
 (defonce api-health (r/atom false))
 

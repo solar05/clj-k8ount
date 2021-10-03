@@ -26,7 +26,7 @@
 (defn current [_]
   (wrap-counter))
 
-(defonce summer-url (str "http://" (or (System/getenv "SUMMER_URL") "localhost") ":5000"))
+(defonce summer-url (str "http://" (or (System/getenv "SUMMER_SERIVCE_HOST") "localhost") ":" (or (System/getenv "SUMMER_SERVICE_PORT") "5000")))
 
 (defonce ping-url (str summer-url "/health"))
 
