@@ -1,3 +1,34 @@
+# Persistent Storage
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: k8ount-pv
+spec:
+  capacity:
+    storage: 500Mi
+  volumeMode: Filesystem
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data
+    type: DirectoryOrCreate
+---
+# Storage Claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: k8ount-pvc
+spec:
+  volumeName: k8ount-pv
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Mi
+---
+# Services
 apiVersion: v1
 kind: Service
 metadata:
@@ -24,6 +55,7 @@ spec:
       name: history
   type: LoadBalancer
 ---
+# Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -76,4 +108,5 @@ spec:
               name: history-vol
       volumes:
         - name: history-vol
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: k8ount-pvc
