@@ -1,5 +1,6 @@
 (ns controller
-  (:require [ring.util.response :refer [response header]]))
+  (:require [ring.util.response :refer [response header]]
+            [clj-http.client :as http]))
 
 (def counter (atom 0))
 
@@ -24,3 +25,16 @@
 
 (defn current [_]
   (wrap-counter))
+
+(defonce summer-url (str "http://" (or (System/getenv "SUMMER_URL") "localhost") ":5000"))
+
+(defonce ping-url (str summer-url "/health"))
+
+(defn ping-summer [_]
+  (let [response (http/get ping-url)
+        status (:status response)]
+    (if (= status 200)
+      (header
+       (response ["It's alive!"]) "Content-Type" "application/json")
+      (header
+       (response ["He sleep!"]) "Content-Type" "application/json"))))

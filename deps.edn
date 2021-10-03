@@ -6,7 +6,8 @@
         compojure/compojure {:mvn/version "1.6.2"}
         ring/ring-json {:mvn/version "0.5.1"}
         ring-cors/ring-cors {:mvn/version "0.1.13"}
-        clj-time/clj-time {:mvn/version "0.15.2"}}
+        clj-time/clj-time {:mvn/version "0.15.2"}
+        clj-http/clj-http {:mvn/version "3.12.3"}}
  :aliases {:test {:extra-paths ["test"]
                   :extra-deps  {lambdaisland/kaocha {:mvn/version "1.0.887"}}
                   :main-opts   ["-m" "kaocha.runner"]}
